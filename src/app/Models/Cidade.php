@@ -9,6 +9,8 @@ class Cidade extends Model {
     /** @use HasFactory<\Database\Factories\CidadeFactory> */
     use HasFactory;
 
+    protected $fillable = ['nome'];
+
     public function clientes() {
         return $this->hasMany(Cliente::class);
     }

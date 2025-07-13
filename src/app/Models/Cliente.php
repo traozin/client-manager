@@ -9,6 +9,8 @@ class Cliente extends Model {
     /** @use HasFactory<\Database\Factories\ClienteFactory> */
     use HasFactory;
 
+    protected $fillable = ['nome', 'cidade_id'];
+
     public function cidade() {
         return $this->belongsTo(Cidade::class);
     }
