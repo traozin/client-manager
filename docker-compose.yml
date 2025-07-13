@@ -1,0 +1,43 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: client-manager-app
+    working_dir: /var/www
+    volumes:
+      - ./src:/var/www
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: clientmanager
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    networks:
+      - laravel
+
+  db:
+    image: mysql:8.0
+    container_name: client-manager-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: clientmanager
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+      MYSQL_USER: laravel
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - 3307:3306
+    networks:
+      - laravel
+
+networks:
+  laravel:
+
+volumes:
+  dbdata:
