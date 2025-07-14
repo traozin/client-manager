@@ -49,23 +49,19 @@
 
                     <div class="col-md-4">
                         <label for="estado" class="form-label">Estado</label>
-                        <select class="form-select" id="estado" name="estado">
+                        <select class="form-select" id="estado" name="estado" required>
                             <option value="">Selecione</option>
-                            <option value="SP">SP</option>
-                            <option value="RJ">RJ</option>
-                            <option value="MG">MG</option>
                         </select>
                         @error('estado') <div class="text-danger">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="col-md-4">
                         <label for="cidade_id" class="form-label">Cidade</label>
-                        <select class="form-select" id="cidade_id" name="cidade_id" required>
+                        <select class="form-select" id="cidade_id" name="cidade_id" required disabled>
                             <option value="">Selecione</option>
                         </select>
                         @error('cidade_id') <div class="text-danger">{{ $message }}</div> @enderror
                     </div>
-
                 </div>
 
                 <div class="d-flex justify-content-start gap-2 mt-4">
@@ -79,43 +75,68 @@
 @endsection
 
 @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const cidadeSelect = document.getElementById('cidade_id');
-            carregarCidades(cidadeSelect);
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const estados = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"];
 
-            async function carregarCidades(selectElement) {
-                try {
-                    const res = await fetch('/api/v1/cidades');
-                    if (!res.ok) {
-                        throw new Error(`Erro HTTP: ${res.status}`);
-                    }
-                    const responseData = await res.json();
-                    const cidades = responseData.data;
+        const estadoSelect = document.getElementById('estado');
+        const cidadeSelect = document.getElementById('cidade_id');
+        const cpfInput = document.getElementById('cpf');
 
-                    selectElement.innerHTML = '<option value="">Selecione</option>';
-                    cidades.forEach(c => {
-                        const opt = document.createElement('option');
-                        opt.value = c.id;
-                        opt.textContent = c.nome;
-                        selectElement.appendChild(opt);
-                    });
-                } catch (error) {
-                    console.error('Erro ao carregar cidades no formulário de cadastro:', error);
-                    alert('Não foi possível carregar as cidades para o formulário.');
-                }
+        preencherEstados();
+
+        estadoSelect.addEventListener('change', () => {
+            const sigla = estadoSelect.value;
+            if (!sigla) {
+                cidadeSelect.innerHTML = '<option value="">Selecione</option>';
+                cidadeSelect.disabled = true;
+                return;
             }
 
-            const cpfInput = document.getElementById('cpf');
-            if (cpfInput) {
-                cpfInput.addEventListener('input', function (e) {
-                    let value = e.target.value.replace(/\D/g, '');
-                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                    e.target.value = value;
-                });
-            }
+            carregarCidadesPorEstado(sigla);
         });
-    </script>
+
+        if (cpfInput) {
+            cpfInput.addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                e.target.value = value;
+            });
+        }
+
+        function preencherEstados() {
+            estados.forEach(estado => {
+                const opt = document.createElement('option');
+                opt.value = estado;
+                opt.textContent = estado;
+                estadoSelect.appendChild(opt);
+            });
+        }
+
+        async function carregarCidadesPorEstado(sigla) {
+            try {
+                const res = await fetch(`/api/v1/cidades?estado=${sigla}`);
+                if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
+                const response = await res.json();
+                const cidades = response.data;
+
+                cidadeSelect.innerHTML = '<option value="">Selecione</option>';
+                cidades.forEach(cidade => {
+                    const opt = document.createElement('option');
+                    opt.value = cidade.id;
+                    opt.textContent = cidade.nome;
+                    cidadeSelect.appendChild(opt);
+                });
+
+                cidadeSelect.disabled = false;
+            } catch (error) {
+                console.error('Erro ao carregar cidades:', error);
+                alert('Erro ao carregar cidades para o estado selecionado.');
+                cidadeSelect.disabled = true;
+            }
+        }
+    });
+</script>
 @endpush
