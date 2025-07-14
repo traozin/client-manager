@@ -24,16 +24,15 @@
                 </div>
 
                 <div class="col-md-3">
-                    <label for="sexoFiltro" class="form-label">Sexo</label>
-                    <select name="sexo" id="sexoFiltro" class="form-select">
-                        <option value="">Selecione</option>
-                        <option value="masculino">Masculino</option>
-                        <option value="feminino">Feminino</option>
-                    </select>
-                </div>
-                <div class="col-md-5">
-                    <label for="enderecoFiltro" class="form-label">Endereço</label>
-                    <input type="text" name="endereco" id="enderecoFiltro" class="form-control" placeholder="Endereço">
+                    <label class="form-label d-block">Sexo</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="sexo" id="sexoFiltroMasculino" value="masculino">
+                        <label class="form-check-label" for="sexoFiltroMasculino">Masculino</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="sexo" id="sexoFiltroFeminino" value="feminino">
+                        <label class="form-check-label" for="sexoFiltroFeminino">Feminino</label>
+                    </div>
                 </div>
                 <div class="col-md-2">
                     <label for="estadoFiltro" class="form-label">Estado</label>
@@ -59,9 +58,9 @@
                         <th style="width: 25%;">Nome</th>
                         <th style="width: 15%;">CPF</th>
                         <th style="width: 15%;">Data Nasc.</th>
-                        <th style="width: 10%;">Sexo</th>
+                        <th style="width: 10%;">Estado</th>
                         <th style="width: 20%;">Cidade</th>
-                        <th style="width: 0;">Representantes</th>
+                        <th style="width: 10%;">Sexo</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaClientes"></tbody>
@@ -271,9 +270,9 @@
                                             <td>${cliente.nome}</td>
                                             <td>${cliente.cpf || ''}</td>
                                             <td>${dataNascimentoFormatada}</td>
-                                            <td>${cliente.sexo ? (cliente.sexo === 'masculino' ? 'M' : 'F') : ''}</td>
+                                            <td>${cliente.cidade?.estado?.sigla || ''}</td>
                                             <td>${cliente.cidade.nome}</td>
-                                            <td>${representantes.map(r => r.nome).join(', ')}</td>
+                                            <td>${cliente.sexo ? (cliente.sexo === 'masculino' ? 'M' : 'F') : ''}</td>
                                         `;
                         tabela.appendChild(tr);
 
