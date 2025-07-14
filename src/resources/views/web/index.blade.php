@@ -160,11 +160,19 @@
         const estados = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"];
 
         document.addEventListener('DOMContentLoaded', () => {
+            carregarEstados(estadoFiltroSelect);
+            carregarEstados(editEstadoSelect);
+
             carregarCidades(cidadeFiltroSelect);
             carregarCidades(editCidadeSelect);
 
-            carregarEstados(estadoFiltroSelect);
-            carregarEstados(editEstadoSelect);
+            estadoFiltroSelect.addEventListener('change', () => {
+                carregarCidades(cidadeFiltroSelect, estadoFiltroSelect.value);
+            });
+
+            editEstadoSelect.addEventListener('change', () => {
+                carregarCidades(editCidadeSelect, editEstadoSelect.value);
+            });
 
             if (cpfFiltroInput) {
                 cpfFiltroInput.addEventListener('input', function (e) {
@@ -214,9 +222,15 @@
             });
         }
 
-        async function carregarCidades(selectElement) {
+        async function carregarCidades(selectElement, estado = '') {
             try {
-                const res = await fetch('/api/v1/cidades');
+                // Monta a url da API com filtro opcional de estado
+                let url = '/api/v1/cidades';
+                if (estado) {
+                    url += `?estado=${estado}`;
+                }
+
+                const res = await fetch(url);
                 if (!res.ok) {
                     throw new Error(`Erro HTTP: ${res.status}`);
                 }
@@ -263,17 +277,17 @@
 
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                                            <td>
-                                                <button class="btn btn-sm btn-success" data-id="${cliente.id}">Editar</button>
-                                                <button class="btn btn-sm btn-danger" data-id="${cliente.id}">Excluir</button>
-                                            </td>
-                                            <td>${cliente.nome}</td>
-                                            <td>${cliente.cpf || ''}</td>
-                                            <td>${dataNascimentoFormatada}</td>
-                                            <td>${cliente.cidade?.estado?.sigla || ''}</td>
-                                            <td>${cliente.cidade.nome}</td>
-                                            <td>${cliente.sexo ? (cliente.sexo === 'masculino' ? 'M' : 'F') : ''}</td>
-                                        `;
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success" data-id="${cliente.id}">Editar</button>
+                                                        <button class="btn btn-sm btn-danger" data-id="${cliente.id}">Excluir</button>
+                                                    </td>
+                                                    <td>${cliente.nome}</td>
+                                                    <td>${cliente.cpf || ''}</td>
+                                                    <td>${dataNascimentoFormatada}</td>
+                                                    <td>${cliente.cidade?.estado?.sigla || ''}</td>
+                                                    <td>${cliente.cidade.nome}</td>
+                                                    <td>${cliente.sexo ? (cliente.sexo === 'masculino' ? 'M' : 'F') : ''}</td>
+                                                `;
                         tabela.appendChild(tr);
 
                         tr.querySelector('.btn-success').addEventListener('click', () => abrirModal(cliente.id));
