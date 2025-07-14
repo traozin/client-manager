@@ -5,7 +5,7 @@
         <div class="card p-4 shadow-sm">
             <h4 class="mb-4">Cadastro de Cliente</h4>
 
-            <form action="{{ route('clientes.store') }}" method="POST">
+            <form id="formCadastro">
                 @csrf
 
                 <div class="row g-3">
@@ -75,68 +75,108 @@
 @endsection
 
 @push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const estados = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"];
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const formCadastro = document.getElementById('formCadastro');
 
-        const estadoSelect = document.getElementById('estado');
-        const cidadeSelect = document.getElementById('cidade_id');
-        const cpfInput = document.getElementById('cpf');
+            const estados = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"];
 
-        preencherEstados();
+            const estadoSelect = document.getElementById('estado');
+            const cidadeSelect = document.getElementById('cidade_id');
+            const cpfInput = document.getElementById('cpf');
 
-        estadoSelect.addEventListener('change', () => {
-            const sigla = estadoSelect.value;
-            if (!sigla) {
-                cidadeSelect.innerHTML = '<option value="">Selecione</option>';
-                cidadeSelect.disabled = true;
-                return;
-            }
+            preencherEstados();
 
-            carregarCidadesPorEstado(sigla);
-        });
+            estadoSelect.addEventListener('change', () => {
+                const sigla = estadoSelect.value;
+                if (!sigla) {
+                    cidadeSelect.innerHTML = '<option value="">Selecione</option>';
+                    cidadeSelect.disabled = true;
+                    return;
+                }
 
-        if (cpfInput) {
-            cpfInput.addEventListener('input', function (e) {
-                let value = e.target.value.replace(/\D/g, '');
-                value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                e.target.value = value;
+                carregarCidadesPorEstado(sigla);
             });
-        }
 
-        function preencherEstados() {
-            estados.forEach(estado => {
-                const opt = document.createElement('option');
-                opt.value = estado;
-                opt.textContent = estado;
-                estadoSelect.appendChild(opt);
-            });
-        }
-
-        async function carregarCidadesPorEstado(sigla) {
-            try {
-                const res = await fetch(`/api/v1/cidades?estado=${sigla}`);
-                if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
-                const response = await res.json();
-                const cidades = response.data;
-
-                cidadeSelect.innerHTML = '<option value="">Selecione</option>';
-                cidades.forEach(cidade => {
-                    const opt = document.createElement('option');
-                    opt.value = cidade.id;
-                    opt.textContent = cidade.nome;
-                    cidadeSelect.appendChild(opt);
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function (e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    e.target.value = value;
                 });
-
-                cidadeSelect.disabled = false;
-            } catch (error) {
-                console.error('Erro ao carregar cidades:', error);
-                alert('Erro ao carregar cidades para o estado selecionado.');
-                cidadeSelect.disabled = true;
             }
-        }
-    });
-</script>
+
+            function preencherEstados() {
+                estados.forEach(estado => {
+                    const opt = document.createElement('option');
+                    opt.value = estado;
+                    opt.textContent = estado;
+                    estadoSelect.appendChild(opt);
+                });
+            }
+
+            async function carregarCidadesPorEstado(sigla) {
+                try {
+                    const res = await fetch(`/api/v1/cidades?estado=${sigla}`);
+                    if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
+                    const response = await res.json();
+                    const cidades = response.data;
+
+                    cidadeSelect.innerHTML = '<option value="">Selecione</option>';
+                    cidades.forEach(cidade => {
+                        const opt = document.createElement('option');
+                        opt.value = cidade.id;
+                        opt.textContent = cidade.nome;
+                        cidadeSelect.appendChild(opt);
+                    });
+
+                    cidadeSelect.disabled = false;
+                } catch (error) {
+                    console.error('Erro ao carregar cidades:', error);
+                    alert('Erro ao carregar cidades para o estado selecionado.');
+                    cidadeSelect.disabled = true;
+                }
+            }
+
+            formCadastro.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(formCadastro);
+                const data = Object.fromEntries(formData);
+
+                try {
+                    const res = await fetch('{{ route('clientes.store') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (res.ok) {
+                        alert('Cliente cadastrado com sucesso!');
+                        window.location.href = '/';
+                    } else {
+                        const errorData = await res.json();
+                        if (res.status === 422 && errorData.errors) {
+                            let msg = 'Erro de validação:\n';
+                            for (const campo in errorData.errors) {
+                                msg += `- ${errorData.errors[campo].join(', ')}\n`;
+                            }
+                            alert(msg);
+                        } else {
+                            alert(`Erro ao cadastrar cliente: ${errorData.message || res.statusText}`);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Erro ao cadastrar cliente:', error);
+                    alert('Ocorreu um erro ao tentar salvar o cliente.');
+                }
+            });
+        });
+    </script>
 @endpush
