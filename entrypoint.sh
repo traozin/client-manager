@@ -28,5 +28,8 @@ fi
 echo "🧩 Executando migrations..."
 php artisan migrate --force
 
+echo "🌱 Rodando os seeders..."
+php artisan db:seed --force
+
 echo "🚀 Iniciando servidor Laravel na porta 8000..."
 exec php artisan serve --host=0.0.0.0 --port=8000
