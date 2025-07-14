@@ -2,17 +2,49 @@
 
 @section('content')
     <div class="container mt-4">
-        <h4 class="mb-3">Consulta de Clientes</h4>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Consulta de Clientes</h4>
+            <a href="{{ route('clientes.create') }}" class="btn btn-success">Criar Novo Cliente</a>
+        </div>
 
-        <form id="formConsulta">
-            <div class="row">
-                <div class="col-md-4 mb-2">
-                    <input type="text" name="nome" class="form-control" placeholder="Nome do cliente">
+        <form id="formConsulta" class="mb-4">
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <label for="cpfFiltro" class="form-label">CPF</label>
+                    <input type="text" name="cpf" id="cpfFiltro" class="form-control" placeholder="000.000.000-00">
                 </div>
-                <div class="col-md-4 mb-2">
-                    <select name="cidade_id" id="cidadeFiltro" class="form-control"></select>
+                <div class="col-md-5">
+                    <label for="nomeFiltro" class="form-label">Nome do cliente</label>
+                    <input type="text" name="nome" id="nomeFiltro" class="form-control" placeholder="Nome do cliente">
                 </div>
-                <div class="col-md-4 mb-2 d-flex gap-2">
+                <div class="col-md-4">
+                    <label for="dataNascimentoFiltro" class="form-label">Data Nascimento</label>
+                    <input type="date" name="data_nascimento" id="dataNascimentoFiltro" class="form-control">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="sexoFiltro" class="form-label">Sexo</label>
+                    <select name="sexo" id="sexoFiltro" class="form-select">
+                        <option value="">Selecione</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="feminino">Feminino</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label for="enderecoFiltro" class="form-label">Endereço</label>
+                    <input type="text" name="endereco" id="enderecoFiltro" class="form-control" placeholder="Endereço">
+                </div>
+                <div class="col-md-2">
+                    <label for="estadoFiltro" class="form-label">Estado</label>
+                    <select name="estado" id="estadoFiltro" class="form-select"></select>
+                </div>
+                <div class="col-md-2">
+                    <label for="cidadeFiltro" class="form-label">Cidade</label>
+                    <select name="cidade_id" id="cidadeFiltro" class="form-select"></select>
+                </div>
+
+                <div class="col-12 d-flex justify-content-end gap-2 mt-3">
                     <button type="submit" class="btn btn-primary">Pesquisar</button>
                     <button type="reset" class="btn btn-secondary" id="btnLimpar">Limpar</button>
                 </div>
@@ -23,10 +55,13 @@
             <table class="table table-bordered align-middle">
                 <thead>
                     <tr>
-                        <th>Ações</th>
-                        <th>Nome</th>
-                        <th>Cidade</th>
-                        <th>Representantes</th>
+                        <th style="width: 15%;">Ações</th>
+                        <th style="width: 25%;">Nome</th>
+                        <th style="width: 15%;">CPF</th>
+                        <th style="width: 15%;">Data Nasc.</th>
+                        <th style="width: 10%;">Sexo</th>
+                        <th style="width: 20%;">Cidade</th>
+                        <th style="width: 0;">Representantes</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaClientes"></tbody>
@@ -48,13 +83,43 @@
 
                     <div class="modal-body">
                         <input type="hidden" name="id">
+
                         <div class="mb-3">
-                            <label>Nome:</label>
-                            <input type="text" name="nome" class="form-control">
+                            <label for="editCpf" class="form-label">CPF:</label>
+                            <input type="text" name="cpf" id="editCpf" class="form-control" placeholder="000.000.000-00">
                         </div>
                         <div class="mb-3">
-                            <label>Cidade:</label>
-                            <select name="cidade_id" class="form-control" id="cidadeEdit"></select>
+                            <label for="editNome" class="form-label">Nome:</label>
+                            <input type="text" name="nome" id="editNome" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDataNascimento" class="form-label">Data Nascimento:</label>
+                            <input type="date" name="data_nascimento" id="editDataNascimento" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label d-block">Sexo:</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sexo" id="editSexoMasculino"
+                                    value="masculino">
+                                <label class="form-check-label" for="editSexoMasculino">Masculino</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="sexo" id="editSexoFeminino"
+                                    value="feminino">
+                                <label class="form-check-label" for="editSexoFeminino">Feminino</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEndereco" class="form-label">Endereço:</label>
+                            <input type="text" name="endereco" id="editEndereco" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEstado" class="form-label">Estado:</label>
+                            <select name="estado" id="editEstado" class="form-select"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCidade" class="form-label">Cidade:</label>
+                            <select name="cidade_id" id="editCidade" class="form-select"></select>
                         </div>
                     </div>
 
@@ -76,12 +141,51 @@
         const formConsulta = document.getElementById('formConsulta');
         const formEdicao = document.getElementById('formEdicao');
         const btnLimpar = document.getElementById('btnLimpar');
+
+        const cpfFiltroInput = document.getElementById('cpfFiltro');
+        const dataNascimentoFiltroInput = document.getElementById('dataNascimentoFiltro');
+        const sexoFiltroSelect = document.getElementById('sexoFiltro');
+        const enderecoFiltroInput = document.getElementById('enderecoFiltro');
+        const estadoFiltroSelect = document.getElementById('estadoFiltro');
         const cidadeFiltroSelect = document.getElementById('cidadeFiltro');
-        const cidadeEditSelect = document.getElementById('cidadeEdit');
+
+        const editCpfInput = document.getElementById('editCpf');
+        const editNomeInput = document.getElementById('editNome');
+        const editDataNascimentoInput = document.getElementById('editDataNascimento');
+        const editSexoMasculinoRadio = document.getElementById('editSexoMasculino');
+        const editSexoFemininoRadio = document.getElementById('editSexoFeminino');
+        const editEnderecoInput = document.getElementById('editEndereco');
+        const editEstadoSelect = document.getElementById('editEstado');
+        const editCidadeSelect = document.getElementById('editCidade');
+
+        const estados = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"];
 
         document.addEventListener('DOMContentLoaded', () => {
             carregarCidades(cidadeFiltroSelect);
-            carregarCidades(cidadeEditSelect);
+            carregarCidades(editCidadeSelect);
+
+            carregarEstados(estadoFiltroSelect);
+            carregarEstados(editEstadoSelect);
+
+            if (cpfFiltroInput) {
+                cpfFiltroInput.addEventListener('input', function (e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    e.target.value = value;
+                });
+            }
+
+            if (editCpfInput) {
+                editCpfInput.addEventListener('input', function (e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    e.target.value = value;
+                });
+            }
 
             formConsulta.addEventListener('submit', e => {
                 e.preventDefault();
@@ -94,11 +198,22 @@
                 formConsulta.reset();
                 tabela.innerHTML = '';
                 paginacao.innerHTML = '';
+                if (cpfFiltroInput) cpfFiltroInput.value = '';
                 buscarClientes(1);
             });
 
             buscarClientes(1);
         });
+
+        function carregarEstados(selectElement) {
+            selectElement.innerHTML = '<option value="">Selecione</option>';
+            estados.forEach(estado => {
+                const opt = document.createElement('option');
+                opt.value = estado;
+                opt.textContent = estado;
+                selectElement.appendChild(opt);
+            });
+        }
 
         async function carregarCidades(selectElement) {
             try {
@@ -140,21 +255,26 @@
 
                 tabela.innerHTML = '';
                 if (data.length === 0) {
-                    tabela.innerHTML = '<tr><td colspan="4" class="text-center">Nenhum cliente encontrado.</td></tr>';
+                    tabela.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum cliente encontrado.</td></tr>';
                 } else {
                     for (const cliente of data) {
                         const { data: representantes } = await fetchRepresentantes(cliente.id);
 
+                        const dataNascimentoFormatada = cliente.data_nascimento ? new Date(cliente.data_nascimento).toLocaleDateString('pt-BR') : '';
+
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                        <td>
-                            <button class="btn btn-sm btn-success" data-id="${cliente.id}">Editar</button>
-                            <button class="btn btn-sm btn-danger" data-id="${cliente.id}">Excluir</button>
-                        </td>
-                        <td>${cliente.nome}</td>
-                        <td>${cliente.cidade.nome}</td>
-                        <td>${representantes.map(r => r.nome).join(', ')}</td>
-                    `;
+                                            <td>
+                                                <button class="btn btn-sm btn-success" data-id="${cliente.id}">Editar</button>
+                                                <button class="btn btn-sm btn-danger" data-id="${cliente.id}">Excluir</button>
+                                            </td>
+                                            <td>${cliente.nome}</td>
+                                            <td>${cliente.cpf || ''}</td>
+                                            <td>${dataNascimentoFormatada}</td>
+                                            <td>${cliente.sexo ? (cliente.sexo === 'masculino' ? 'M' : 'F') : ''}</td>
+                                            <td>${cliente.cidade.nome}</td>
+                                            <td>${representantes.map(r => r.nome).join(', ')}</td>
+                                        `;
                         tabela.appendChild(tr);
 
                         tr.querySelector('.btn-success').addEventListener('click', () => abrirModal(cliente.id));
@@ -174,12 +294,14 @@
             try {
                 const repsRes = await fetch(`/api/v1/clientes/${clienteId}/representantes`);
                 if (!repsRes.ok) {
-                    throw new Error(`Erro HTTP ao buscar representantes: ${repsRes.status}`);
+                    const errorBody = await repsRes.text();
+                    console.error(`Erro HTTP ao buscar representantes para o cliente ${clienteId}: ${repsRes.status} - ${errorBody}`);
+                    return { data: [] };
                 }
                 return await repsRes.json();
             } catch (error) {
-                console.error(`Erro ao buscar representantes para o cliente ${clienteId}:`, error);
-                return [];
+                console.error(`Erro geral ao buscar representantes para o cliente ${clienteId}:`, error);
+                return { data: [] };
             }
         }
 
@@ -206,11 +328,34 @@
                 if (!res.ok) {
                     throw new Error(`Erro HTTP: ${res.status}`);
                 }
-                const cliente = await res.json();
+                const responseData = await res.json();
+                const cliente = responseData.data;
 
+                // Preencher campos do modal
                 formEdicao.id.value = cliente.id;
-                formEdicao.nome.value = cliente.nome;
-                formEdicao.cidade_id.value = cliente.cidade_id;
+                editCpfInput.value = cliente.cpf || '';
+                editNomeInput.value = cliente.nome || '';
+
+                if (cliente.data_nascimento) {
+                    const date = new Date(cliente.data_nascimento);
+                    editDataNascimentoInput.value = date.toISOString().split('T')[0];
+                } else {
+                    editDataNascimentoInput.value = '';
+                }
+
+                // Sexo
+                if (cliente.sexo === 'masculino') {
+                    editSexoMasculinoRadio.checked = true;
+                } else if (cliente.sexo === 'feminino') {
+                    editSexoFemininoRadio.checked = true;
+                } else {
+                    editSexoMasculinoRadio.checked = false;
+                    editSexoFemininoRadio.checked = false;
+                }
+
+                editEnderecoInput.value = cliente.endereco || '';
+                editEstadoSelect.value = cliente.estado || '';
+                editCidadeSelect.value = cliente.cidade_id || '';
 
                 modalEditar.show();
             } catch (error) {
@@ -221,8 +366,11 @@
 
         async function salvarEdicao(e) {
             e.preventDefault();
-            const dados = Object.fromEntries(new FormData(formEdicao));
+            const form = e.target;
+            const dados = Object.fromEntries(new FormData(form));
             const id = dados.id;
+
+            dados.sexo = form.querySelector('input[name="sexo"]:checked')?.value || null;
 
             try {
                 const res = await fetch(`/api/v1/clientes/${id}`, {
@@ -237,7 +385,15 @@
                     buscarClientes();
                 } else {
                     const errorData = await res.json();
-                    alert(`Erro ao atualizar cliente: ${errorData.message || res.statusText}`);
+                    if (res.status === 422 && errorData.errors) {
+                        let errorMessages = 'Erro de validação:\n';
+                        for (const field in errorData.errors) {
+                            errorMessages += `- ${errorData.errors[field].join(', ')}\n`;
+                        }
+                        alert(errorMessages);
+                    } else {
+                        alert(`Erro ao atualizar cliente: ${errorData.message || res.statusText}`);
+                    }
                 }
             } catch (error) {
                 console.error('Erro ao salvar edição:', error);

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 
 class ViewClienteController extends Controller {
     public function create() {
-        return view('clientes.create');
+        return view('web.create');
     }
 
     public function index() {
