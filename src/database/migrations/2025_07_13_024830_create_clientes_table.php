@@ -11,8 +11,12 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('clientes', function (Blueprint $table) {
             $table->id();
+            $table->string('cpf')->unique();
             $table->string('nome');
-            $table->foreignId('cidade_id')->constrained('cidades')->onDelete('cascade');
+            $table->date('data_nascimento')->nullable();
+            $table->enum('sexo', ['masculino', 'feminino'])->nullable();
+            $table->string('endereco')->nullable();
+            $table->foreignId('cidade_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

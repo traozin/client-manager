@@ -11,7 +11,11 @@ class StoreClienteRequest extends FormRequest {
 
     public function rules(): array {
         return [
+            'cpf' => 'required|string|size:14|unique:clientes,cpf',
             'nome' => 'required|string|max:255',
+            'data_nascimento' => 'nullable|date',
+            'sexo' => 'nullable|in:masculino,feminino',
+            'endereco' => 'nullable|string|max:255',
             'cidade_id' => 'required|exists:cidades,id',
         ];
     }

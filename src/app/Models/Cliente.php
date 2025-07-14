@@ -9,7 +9,19 @@ class Cliente extends Model {
     /** @use HasFactory<\Database\Factories\ClienteFactory> */
     use HasFactory;
 
-    protected $fillable = ['nome', 'cidade_id'];
+    protected $fillable = [
+        'cpf',
+        'nome',
+        'data_nascimento',
+        'sexo',
+        'endereco',
+        'estado',
+        'cidade_id',
+    ];
+
+    protected $casts = [
+        'data_nascimento' => 'date',
+    ];
 
     public function cidade() {
         return $this->belongsTo(Cidade::class);

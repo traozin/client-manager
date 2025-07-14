@@ -14,8 +14,12 @@ class ClienteFactory extends Factory {
 
     public function definition(): array {
         return [
-            'nome' => $this->faker->name,
-            'cidade_id' => Cidade::inRandomOrder()->first()?->id ?? Cidade::factory(),
+            'cpf' => $this->faker->unique()->numerify('###.###.###-##'),
+            'nome' => $this->faker->name(),
+            'data_nascimento' => $this->faker->date('Y-m-d', '-18 years'),
+            'sexo' => $this->faker->randomElement(['masculino', 'feminino']),
+            'endereco' => $this->faker->address(),
+            'cidade_id' => Cidade::inRandomOrder()->first()->id,
         ];
     }
 }

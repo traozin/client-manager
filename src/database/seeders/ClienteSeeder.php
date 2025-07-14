@@ -7,6 +7,6 @@ use Illuminate\Database\Seeder;
 
 class ClienteSeeder extends Seeder {
     public function run(): void {
-        Cliente::factory()->count(10)->create();
+        Cliente::factory(20)->create();
     }
 }
