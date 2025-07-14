@@ -18,4 +18,8 @@ class Cidade extends Model {
     public function representantes() {
         return $this->hasMany(Representante::class);
     }
+
+    public function estado() {
+        return $this->belongsTo(Estado::class);
+    }
 }
